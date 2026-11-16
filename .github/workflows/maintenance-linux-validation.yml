@@ -17,12 +17,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: chrislearn/rav1e
-          ref: b1af6dfed0c7d413700cc81eb7d194b764295451
+          ref: d2deddc58fdbbb30aafbc550836454910de91af9
           persist-credentials: false
       - name: Verify tested source
         run: |
           git rev-parse HEAD
-          test "$(git rev-parse HEAD)" = b1af6dfed0c7d413700cc81eb7d194b764295451
+          test "$(git rev-parse HEAD)" = d2deddc58fdbbb30aafbc550836454910de91af9
       - uses: ilammy/setup-nasm@v1
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -44,12 +44,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: chrislearn/rav1e
-          ref: b1af6dfed0c7d413700cc81eb7d194b764295451
+          ref: d2deddc58fdbbb30aafbc550836454910de91af9
           persist-credentials: false
       - name: Verify tested source
         run: |
           git rev-parse HEAD
-          test "$(git rev-parse HEAD)" = b1af6dfed0c7d413700cc81eb7d194b764295451
+          test "$(git rev-parse HEAD)" = d2deddc58fdbbb30aafbc550836454910de91af9
       - uses: ilammy/setup-nasm@v1
         with:
           version: 2.15
