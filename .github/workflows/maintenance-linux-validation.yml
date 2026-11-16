@@ -1,0 +1,61 @@
+name: Maintenance Linux validation
+
+on:
+  push:
+    branches:
+      - ci/0.8-linux-validation-20261117
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stable-linux:
+    runs-on: ubuntu-24.04
+    steps:
+      # This fork-only workflow validates the unchanged upstream PR source.
+      - uses: actions/checkout@v4
+        with:
+          repository: chrislearn/rav1e
+          ref: b1af6dfed0c7d413700cc81eb7d194b764295451
+          persist-credentials: false
+      - name: Verify tested source
+        run: |
+          git rev-parse HEAD
+          test "$(git rev-parse HEAD)" = b1af6dfed0c7d413700cc81eb7d194b764295451
+      - uses: ilammy/setup-nasm@v1
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: maintenance-linux-stable
+      - name: Test assembly and threading
+        run: cargo test --lib --no-default-features --features asm,threading
+      - name: Check all targets with Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+  msrv-linux:
+    runs-on: ubuntu-24.04
+    env:
+      CARGO_INCREMENTAL: 0
+      RUSTFLAGS: -Dwarnings
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: chrislearn/rav1e
+          ref: b1af6dfed0c7d413700cc81eb7d194b764295451
+          persist-credentials: false
+      - name: Verify tested source
+        run: |
+          git rev-parse HEAD
+          test "$(git rev-parse HEAD)" = b1af6dfed0c7d413700cc81eb7d194b764295451
+      - uses: ilammy/setup-nasm@v1
+        with:
+          version: 2.15
+      - uses: dtolnay/rust-toolchain@1.83.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: maintenance-linux-msrv
+      - name: Check library on declared MSRV
+        run: cargo check --lib --no-default-features --features asm,threading
